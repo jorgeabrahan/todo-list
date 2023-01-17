@@ -14,7 +14,9 @@
       <section>
         <div>
           <h1>Today's To Do</h1>
-          <span class="material-symbols-outlined"> cycle </span>
+          <button>
+            <span class="material-symbols-outlined"> cycle </span>
+          </button>
         </div>
         <!-- form to add new todo -->
         <form id="frmAddToDo">
@@ -23,19 +25,7 @@
           <span class="material-symbols-outlined"> keyboard_return </span>
         </form>
         <!-- list of todos -->
-        <ul>
-          <li>
-            <div>
-              <span class="material-symbols-outlined"> done </span>
-              <input type="checkbox" />
-            </div>
-            <p>Wash the dishes</p>
-            <div>
-              <span class="material-symbols-outlined"> more_vert </span>
-              <span class="material-symbols-outlined"> delete </span>
-            </div>
-          </li>
-        </ul>
+        <ul class="todos" id="cntTodos"></ul>
         <button>Clear all completed</button>
       </section>
     </main>

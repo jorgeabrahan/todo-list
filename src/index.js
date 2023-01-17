@@ -1,11 +1,9 @@
-import _ from 'lodash';
+import ToDos from './modules/ToDos.js';
 import './style.css';
 
-function component() {
-  const element = document.createElement('div');
-  element.innerHTML = _.join(['Hello', 'webpack'], ' ');
-  element.classList.add('hello');
-  return element;
-}
+const todosCnt = document.getElementById('cntTodos');
 
-document.body.appendChild(component());
+const todos = new ToDos(todosCnt);
+todos.add('Fix the car', false, 0);
+todos.add('Clean the house', false, 1);
+todos.add('Do homeworks', false, 2);
