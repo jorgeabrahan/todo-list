@@ -1,1 +1,7 @@
 @import url('./normalize.css');
+body {
+  background-color: bisque;
+}
+.hello {
+  color: red;
+}
