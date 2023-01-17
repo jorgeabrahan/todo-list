@@ -3,9 +3,44 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Wbpack Exercise</title>
+    <title>ToDo list</title>
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200"
+    />
   </head>
   <body>
-    <h1>Hello webpack!</h1>
+    <main>
+      <section>
+        <div>
+          <h1>Today's To Do</h1>
+          <span class="material-symbols-outlined"> cycle </span>
+        </div>
+        <!-- form to add new todo -->
+        <form id="frmAddToDo">
+          <label for="todo">Add to your list</label>
+          <input type="text" placeholder="Add to your list..." name="todo" id="todo" />
+          <span class="material-symbols-outlined"> keyboard_return </span>
+        </form>
+        <!-- list of todos -->
+        <ul>
+          <li>
+            <div>
+              <span class="material-symbols-outlined"> done </span>
+              <input type="checkbox" />
+            </div>
+            <p>Wash the dishes</p>
+            <div>
+              <span class="material-symbols-outlined"> more_vert </span>
+              <span class="material-symbols-outlined"> delete </span>
+            </div>
+          </li>
+        </ul>
+        <button>Clear all completed</button>
+      </section>
+    </main>
+    <footer>
+      <p>&copy; 2023 Made by <a href="https://github.com/jorgeabrahan">@jorgeabrahan</a></p>
+    </footer>
   </body>
 </html>
