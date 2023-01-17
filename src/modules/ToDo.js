@@ -11,16 +11,18 @@ export default class ToDo {
     todo.className = 'todo';
     todo.id = this.id;
     todo.innerHTML = `
-      <div class="todo__check">
-        <span class="todo__done material-symbols-outlined"> done </span>
-        <input class="todo__check-input" type="checkbox" ${this.completed && 'checked'} />
+      <div class="todo__content">
+        <div class="todo__check">
+          <input class="todo__check-input" type="checkbox" ${this.completed ? 'checked' : ''} />
+          <span class="todo__done material-symbols-outlined"> check </span>
+        </div>
+        <input class="todo__description" type="text" value="${this.description}" />
       </div>
-      <p>${this.description}</p>
       <div class="todo__edit">
-        <button class="btnMove">
+        <button class="btnMove btn-icon">
           <span class="material-symbols-outlined"> more_vert </span>
         </button>
-        <button class="btnDelete">
+        <button class="btnDelete btn-icon">
           <span class="material-symbols-outlined"> delete </span>
         </button>
       </div>

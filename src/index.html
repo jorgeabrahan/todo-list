@@ -10,27 +10,24 @@
     />
   </head>
   <body>
-    <main>
-      <section>
-        <div>
+    <main class="center h-100vh">
+      <section class="todos">
+        <div class="todos__header">
           <h1>Today's To Do</h1>
-          <button>
+          <button class="btn-icon">
             <span class="material-symbols-outlined"> cycle </span>
           </button>
         </div>
         <!-- form to add new todo -->
-        <form id="frmAddToDo">
-          <label for="todo">Add to your list</label>
-          <input type="text" placeholder="Add to your list..." name="todo" id="todo" />
-          <span class="material-symbols-outlined"> keyboard_return </span>
+        <form class="todos__form" id="frmAddToDo">
+          <label class="sr-only" for="todo">Add to your list</label>
+          <input class="todos__input" type="text" placeholder="Add to your list..." name="todo" id="todo" />
+          <span class="todos__enter-icon material-symbols-outlined"> keyboard_return </span>
         </form>
         <!-- list of todos -->
-        <ul class="todos" id="cntTodos"></ul>
-        <button>Clear all completed</button>
+        <ul class="todos__list" id="cntTodos"></ul>
+        <button class="todos__clear">Clear all completed</button>
       </section>
     </main>
-    <footer>
-      <p>&copy; 2023 Made by <a href="https://github.com/jorgeabrahan">@jorgeabrahan</a></p>
-    </footer>
   </body>
 </html>

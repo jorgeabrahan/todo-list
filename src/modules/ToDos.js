@@ -12,9 +12,12 @@ export default class ToDos {
     });
   }
 
-  check() {
-    console.log(this.todos);
-    console.log('check');
+  check(todo, input) {
+    if (input.checked) {
+      input.setAttribute('checked', '');
+      return;
+    }
+    input.removeAttribute('checked', '');
   }
 
   move() {
@@ -30,8 +33,8 @@ export default class ToDos {
   }
 
   addEvents(todo) {
-    todo.querySelector('input').addEventListener('change', () => {
-      this.check(todo);
+    todo.querySelector('input').addEventListener('change', ({ target }) => {
+      this.check(todo, target);
     });
     todo.querySelector('.btnMove').addEventListener('click', () => {
       this.move(todo);

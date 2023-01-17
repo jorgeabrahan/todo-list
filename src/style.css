@@ -1,9 +1,3 @@
-@import url('./normalize.css');
-
-body {
-  background-color: bisque;
-}
-
-.hello {
-  color: red;
-}
+@import url('./css/normalize.css');
+@import url('./css/general.css');
+@import url('./css/todos.css');
