@@ -13,7 +13,7 @@ export default class ToDo {
     todo.innerHTML = `
       <div class="todo__content">
         <div class="todo__check">
-          <input class="todo__check-input" type="checkbox" ${this.completed ? 'checked' : ''} />
+          <input class="todo__check-input" type="checkbox" />
           <span class="todo__done material-symbols-outlined"> check </span>
         </div>
         <input class="todo__description" type="text" value="${this.description}" />

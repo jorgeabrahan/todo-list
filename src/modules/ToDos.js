@@ -13,10 +13,17 @@ export default class ToDos {
   }
 
   check(todo, input) {
+    this.todos.forEach((element) => {
+      if (element.id === todo.id) {
+        element.completed = input.checked;
+      }
+    });
     if (input.checked) {
       input.setAttribute('checked', '');
+      todo.querySelector('.todo__description').style.textDecoration = 'line-through';
       return;
     }
+    todo.querySelector('.todo__description').style.textDecoration = 'none';
     input.removeAttribute('checked', '');
   }
 
@@ -33,7 +40,7 @@ export default class ToDos {
   }
 
   addEvents(todo) {
-    todo.querySelector('input').addEventListener('change', ({ target }) => {
+    todo.querySelector('input[type="checkbox"]').addEventListener('change', ({ target }) => {
       this.check(todo, target);
     });
     todo.querySelector('.btnMove').addEventListener('click', () => {
