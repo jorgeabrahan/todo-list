@@ -3,10 +3,12 @@
   width: 100%;
   max-width: 500px;
   border-radius: 3px;
+
   --padding: 0.8rem;
   --border: 1px solid rgba(0, 0, 0, 0.08);
   --clr-secondary: #5b5f68;
-  box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.15);
+
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
 }
 
 .todos__header {
@@ -90,9 +92,11 @@ input.todo__check-input {
   height: 18px;
   vertical-align: middle;
 }
+
 .todo__check-input[checked] {
   opacity: 0;
 }
+
 .todo__check-input[checked] + .todo__done {
   display: block;
 }
@@ -102,6 +106,7 @@ input.todo__check-input {
   width: 100%;
   outline: none;
 }
+
 .todo__description.completed {
   text-decoration: line-through;
   color: var(--clr-secondary);
@@ -115,6 +120,7 @@ input.todo__check-input {
 .btnMove {
   cursor: move;
 }
+
 .btnDelete {
   display: none;
 }
@@ -127,6 +133,7 @@ input.todo__check-input {
 .todo--focus .btnDelete {
   display: flex;
 }
+
 .todo--focus .btnMove {
   display: none;
 }
@@ -138,6 +145,7 @@ input.todo__check-input {
   color: var(--clr-secondary);
   border: none;
 }
+
 .todos__clear:hover {
   text-decoration: underline;
   color: black;
