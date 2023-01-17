@@ -81,7 +81,7 @@ export default class ToDos {
     });
   }
 
-  add(description, completed) {
+  add(description, completed = false) {
     const todo = new ToDo(description, completed, this.todos.length, ToDos.genId());
     this.todos.push(todo);
     const todoHtml = todo.createHtml();

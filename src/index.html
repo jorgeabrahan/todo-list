@@ -21,7 +21,14 @@
         <!-- form to add new todo -->
         <form class="todos__form" id="frmAddToDo">
           <label class="sr-only" for="todo">Add to your list</label>
-          <input class="todos__input" type="text" placeholder="Add to your list..." name="todo" id="todo" />
+          <input
+            class="todos__input"
+            type="text"
+            placeholder="Add to your list..."
+            name="todo"
+            id="todo"
+            maxlength="40"
+          />
           <span class="todos__enter-icon material-symbols-outlined"> keyboard_return </span>
         </form>
         <!-- list of todos -->
