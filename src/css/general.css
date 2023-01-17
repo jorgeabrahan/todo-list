@@ -1,0 +1,29 @@
+.center {
+  display: grid;
+  place-items: center;
+}
+
+.h-100vh {
+  height: 100vh;
+}
+
+.btn-icon {
+  background: none;
+  border: none;
+  display: flex;
+  align-items: center;
+}
+
+.p-1rem {
+  padding: 1rem;
+}
+
+.sr-only {
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+  width: 1px;
+  aspect-ratio: 1/1;
+  overflow: hidden;
+  position: absolute;
+  white-space: nowrap;
+}

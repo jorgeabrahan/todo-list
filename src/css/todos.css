@@ -1,0 +1,152 @@
+.todos {
+  background: white;
+  width: 100%;
+  max-width: 500px;
+  border-radius: 3px;
+
+  --padding: 0.8rem;
+  --border: 1px solid rgba(0, 0, 0, 0.08);
+  --clr-secondary: #5b5f68;
+
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+.todos__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--padding);
+  border-bottom: var(--border);
+}
+
+.todos__header *,
+.todo__edit * {
+  color: var(--clr-secondary);
+}
+
+.todos__form {
+  position: relative;
+}
+
+.todos__input {
+  width: 100%;
+  outline: none;
+  border: none;
+  border-bottom: var(--border);
+  padding: var(--padding);
+  font-size: 1.1rem;
+  font-style: italic;
+}
+
+.todos__enter-icon {
+  position: absolute;
+  top: 0;
+  right: calc(var(--padding) + 0.4rem);
+  height: 100%;
+  display: flex;
+  align-items: center;
+  font-size: 1rem;
+  color: var(--clr-secondary);
+}
+
+.todos__list {
+  list-style: none;
+  padding-left: 0;
+}
+
+.todo {
+  padding: var(--padding);
+  border-bottom: var(--border);
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.todo,
+.todo__content,
+.todo__check,
+.todo__edit {
+  display: flex;
+  align-items: center;
+}
+
+.todo__content {
+  gap: 1rem;
+  width: 100%;
+}
+
+.todo__check {
+  position: relative;
+}
+
+.todo__done {
+  position: absolute;
+  left: -2px;
+  top: -3px;
+  pointer-events: none;
+  display: none;
+  color: #338de6;
+}
+
+input.todo__check-input {
+  width: 18px;
+  height: 18px;
+  vertical-align: middle;
+}
+
+.todo__check-input[checked] {
+  opacity: 0;
+}
+
+.todo__check-input[checked] + .todo__done {
+  display: block;
+}
+
+.todo__description {
+  border: none;
+  width: 100%;
+  outline: none;
+}
+
+.todo__description.completed {
+  text-decoration: line-through;
+  color: var(--clr-secondary);
+}
+
+.btnDelete span,
+.btnMove span {
+  pointer-events: none;
+}
+
+.btnMove {
+  cursor: move;
+}
+
+.btnDelete {
+  display: none;
+}
+
+.todo--focus,
+.todo--focus * {
+  background-color: #fffeca;
+}
+
+.todo--focus .btnDelete {
+  display: flex;
+}
+
+.todo--focus .btnMove {
+  display: none;
+}
+
+.todos__clear {
+  padding: var(--padding);
+  width: 100%;
+  background-color: #f6f6f6;
+  color: var(--clr-secondary);
+  border: none;
+}
+
+.todos__clear:hover {
+  text-decoration: underline;
+  color: black;
+}

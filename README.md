@@ -3,7 +3,7 @@
 # 📗 Table of Contents
 
 - [📗 Table of Contents](#-table-of-contents)
-- [📖 Webpack Demo ](#-webpack-demo-)
+- [📖 ToDo List ](#-todo-list-)
   - [🛠 Built With ](#-built-with-)
     - [Tech Stack ](#tech-stack-)
     - [Key Features ](#key-features-)
@@ -23,9 +23,9 @@
   - [❓ FAQ ](#-faq-)
   - [📝 License ](#-license-)
 
-# 📖 Webpack Demo <a name="about-project"></a>
+# 📖 ToDo List <a name="about-project"></a>
 
-**Webpack Demo** is a project to understand how webpack works and how to bundle JavaScript files.
+**ToDo List** a simple HTML list of *To Do* tasks implementing ES6 features and webpack bundling.
 
 ## 🛠 Built With <a name="built-with"></a>
 
@@ -56,8 +56,8 @@
 
 ### Key Features <a name="key-features"></a>
 
-- **Webpack basic setup**
-- **JavaScript bundle file**
+- **Minified files for performance improvement**
+- **ES6 JavaScript features**
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -85,7 +85,7 @@ In order to run this project you need:
 Clone this repository to your desired folder:
 
 ```
-git clone https://github.com/jorgeabrahan/webpack_demo.git
+git clone https://github.com/jorgeabrahan/todo_list.git
 ```
 
 Or download the ZIP folder.
@@ -95,7 +95,7 @@ Or download the ZIP folder.
 Once you've cloned the repository simply run:
 
 ```
-cd webpack_demo
+cd todo_list
 ```
 
 And this should open the directory with all the files from the repository on the command line, to open it in your explorer if you're using windows you can run:
@@ -106,7 +106,7 @@ explorer .
 
 ### Usage
 
-To run the project, if you are on the webpack_demo folder path on your terminal you can execute the following command:
+To run the project, if you are on the todo_list folder path on your terminal you can execute the following command:
 
 ```
 code .

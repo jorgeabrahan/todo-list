@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Pangolin&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Sofia+Sans:wght@300;400;600;700&display=swap');
 
 *,
 *::before,
@@ -15,7 +15,7 @@ html {
 }
 
 body {
-  font-family: 'Pangolin', cursive;
+  font-family: 'Sofia Sans', sans-serif;
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;
 }
