@@ -4,6 +4,7 @@ export default class ToDos {
   constructor(container) {
     this.container = container;
     this.todos = [];
+    this.isEditEnabled = false;
   }
 
   fixIndex() {
@@ -20,11 +21,33 @@ export default class ToDos {
     });
     if (input.checked) {
       input.setAttribute('checked', '');
-      todo.querySelector('.todo__description').style.textDecoration = 'line-through';
+      todo.querySelector('input[type="text"]').classList.add('completed');
       return;
     }
-    todo.querySelector('.todo__description').style.textDecoration = 'none';
+    todo.querySelector('input[type="text"]').classList.remove('completed');
     input.removeAttribute('checked', '');
+  }
+
+  focusIn(todo, input) {
+    todo.classList.add('todo--focus');
+    input.classList.remove('completed');
+    this.isEditEnabled = true;
+  }
+
+  focusOut(todo, input) {
+    todo.classList.remove('todo--focus');
+    this.todos.forEach((element) => {
+      if (element.id === todo.id) {
+        element.description = input.value;
+        if (element.completed) {
+          input.classList.add('completed');
+        }
+      }
+    });
+    if (input.value.trim() === '') {
+      this.delete(todo);
+    }
+    this.isEditEnabled = false;
   }
 
   move() {
@@ -42,6 +65,13 @@ export default class ToDos {
   addEvents(todo) {
     todo.querySelector('input[type="checkbox"]').addEventListener('change', ({ target }) => {
       this.check(todo, target);
+    });
+    todo.querySelector('input[type="text"]').addEventListener('focusin', ({ target }) => {
+      this.focusIn(todo, target);
+    });
+    todo.querySelector('input[type="text"]').addEventListener('focusout', ({ relatedTarget, target }) => {
+      if (relatedTarget !== null && relatedTarget.tagName === 'BUTTON') return;
+      this.focusOut(todo, target);
     });
     todo.querySelector('.btnMove').addEventListener('click', () => {
       this.move(todo);

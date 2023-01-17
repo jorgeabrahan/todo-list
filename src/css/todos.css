@@ -102,11 +102,32 @@ input.todo__check-input {
   width: 100%;
   outline: none;
 }
+.todo__description.completed {
+  text-decoration: line-through;
+  color: var(--clr-secondary);
+}
+
+.btnDelete span,
+.btnMove span {
+  pointer-events: none;
+}
 
 .btnMove {
   cursor: move;
 }
 .btnDelete {
+  display: none;
+}
+
+.todo--focus,
+.todo--focus * {
+  background-color: #fffeca;
+}
+
+.todo--focus .btnDelete {
+  display: flex;
+}
+.todo--focus .btnMove {
   display: none;
 }
 
