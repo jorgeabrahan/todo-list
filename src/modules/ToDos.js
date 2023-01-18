@@ -1,3 +1,6 @@
+import {
+  dragEnd, dragOver, dragStart,
+} from './drag.js';
 import ToDo from './ToDo.js';
 
 export default class ToDos {
@@ -8,6 +11,10 @@ export default class ToDos {
       this.loadPrevious();
     }
     this.isEditEnabled = false;
+
+    this.container.addEventListener('dragover', (e) => {
+      dragOver(this.container, e);
+    });
   }
 
   loadPrevious() {
@@ -106,6 +113,14 @@ export default class ToDos {
     });
     todo.querySelector('.btnDelete').addEventListener('click', () => {
       this.delete(todo);
+    });
+
+    todo.addEventListener('dragstart', (e) => {
+      dragStart(todo, e);
+    });
+
+    todo.addEventListener('dragend', () => {
+      dragEnd(todo);
     });
   }
 

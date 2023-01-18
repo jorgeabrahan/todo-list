@@ -113,11 +113,6 @@ input.todo__check-input {
   color: var(--clr-secondary);
 }
 
-.btnDelete span,
-.btnMove span {
-  pointer-events: none;
-}
-
 .btnMove {
   cursor: move;
 }
