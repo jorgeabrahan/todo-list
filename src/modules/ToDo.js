@@ -9,6 +9,7 @@ export default class ToDo {
   createHtml() {
     const todo = document.createElement('li');
     todo.className = 'todo';
+    todo.setAttribute('draggable', 'true');
     todo.id = this.id;
     todo.innerHTML = `
       <div class="todo__content">

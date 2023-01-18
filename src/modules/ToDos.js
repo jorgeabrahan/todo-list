@@ -85,11 +85,6 @@ export default class ToDos {
     this.isEditEnabled = false;
   }
 
-  move() {
-    console.log(this.todos);
-    console.log('move');
-  }
-
   delete(todo) {
     const filtered = this.todos.filter(({ id }) => id !== todo.id);
     this.todos = filtered;
@@ -109,9 +104,6 @@ export default class ToDos {
       if (relatedTarget !== null && relatedTarget.classList.contains('btnDelete')) return;
       this.focusOut(todo, target);
     });
-    todo.querySelector('.btnMove').addEventListener('click', () => {
-      this.move(todo);
-    });
     todo.querySelector('.btnDelete').addEventListener('click', () => {
       this.delete(todo);
     });
@@ -127,7 +119,7 @@ export default class ToDos {
   }
 
   static genId(tokenLen = 16) {
-    let id = '';
+    let id = 'a';
     const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
     for (let i = 0; i < tokenLen; i += 1) {
       id += chars.charAt(Math.floor(Math.random() * chars.length));
