@@ -15,8 +15,38 @@ __webpack_require__.r(__webpack_exports__);
 class ToDos {
   constructor(container) {
     this.container = container;
-    this.todos = [];
+    this.todos = JSON.parse(localStorage.getItem('todos')) || [];
+    if (this.todos.length > 0) {
+      this.loadPrevious();
+    }
     this.isEditEnabled = false;
+  }
+
+  loadPrevious() {
+    const instances = [];
+    const fragment = document.createDocumentFragment();
+    this.todos.forEach(({ description, completed, index, id }) => {
+      const instance = new _ToDo_js__WEBPACK_IMPORTED_MODULE_0__["default"](description, completed, index, id);
+      instances.push(instance);
+      const todoHtml = instance.createHtml();
+      this.addEvents(todoHtml);
+      fragment.appendChild(todoHtml);
+    });
+    this.container.appendChild(fragment);
+    this.todos = instances;
+    this.saveLocally();
+  }
+
+  saveLocally() {
+    localStorage.setItem('todos', JSON.stringify(this.todos));
+  }
+
+  removeSelected() {
+    this.todos.forEach((todo) => {
+      if (todo.completed) {
+        this.delete(this.container.querySelector(`#${todo.id}`));
+      }
+    });
   }
 
   fixIndex() {
@@ -31,6 +61,7 @@ class ToDos {
         element.completed = input.checked;
       }
     });
+    this.saveLocally();
     if (input.checked) {
       input.setAttribute('checked', '');
       todo.querySelector('input[type="text"]').classList.add('completed');
@@ -59,6 +90,7 @@ class ToDos {
     if (input.value.trim() === '') {
       this.delete(todo);
     }
+    this.saveLocally();
     this.isEditEnabled = false;
   }
 
@@ -72,6 +104,7 @@ class ToDos {
     this.todos = filtered;
     this.fixIndex();
     todo.remove();
+    this.saveLocally();
   }
 
   addEvents(todo) {
@@ -82,7 +115,7 @@ class ToDos {
       this.focusIn(todo, target);
     });
     todo.querySelector('input[type="text"]').addEventListener('focusout', ({ relatedTarget, target }) => {
-      if (relatedTarget !== null && relatedTarget.tagName === 'BUTTON') return;
+      if (relatedTarget !== null && relatedTarget.classList.contains('btnDelete')) return;
       this.focusOut(todo, target);
     });
     todo.querySelector('.btnMove').addEventListener('click', () => {
@@ -99,6 +132,7 @@ class ToDos {
     const todoHtml = todo.createHtml();
     this.addEvents(todoHtml);
     this.container.appendChild(todoHtml);
+    this.saveLocally();
   }
 
   static genId(tokenLen = 16) {
@@ -135,10 +169,10 @@ class ToDo {
     todo.innerHTML = `
       <div class="todo__content">
         <div class="todo__check">
-          <input class="todo__check-input" type="checkbox" />
+          <input class="todo__check-input" type="checkbox" ${this.completed ? 'checked' : ''} />
           <span class="todo__done material-symbols-outlined"> check </span>
         </div>
-        <input class="todo__description" type="text" value="${this.description}" />
+        <input class="todo__description ${this.completed ? 'completed' : ''}" type="text" value="${this.description}" />
       </div>
       <div class="todo__edit">
         <button class="btnMove btn-icon">
@@ -769,10 +803,8 @@ __webpack_require__.r(__webpack_exports__);
 
 const todosCnt = document.getElementById('cntTodos');
 const frmAddToDo = document.getElementById('frmAddToDo');
+const btnClearAllTodos = document.getElementById('btnClearAllTodos');
 const todos = new _modules_ToDos_js__WEBPACK_IMPORTED_MODULE_0__["default"](todosCnt);
-todos.add('Fix the car');
-todos.add('Clean the house');
-todos.add('Do homeworks');
 
 frmAddToDo.addEventListener('submit', (e) => {
   e.preventDefault();
@@ -783,6 +815,10 @@ frmAddToDo.addEventListener('submit', (e) => {
   todos.add(todo);
   frmAddToDo.reset();
   frmAddToDo.todo.focus();
+});
+
+btnClearAllTodos.addEventListener('click', () => {
+  todos.removeSelected();
 });
 
 })();

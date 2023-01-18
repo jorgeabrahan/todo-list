@@ -13,7 +13,9 @@ export default class ToDos {
   loadPrevious() {
     const instances = [];
     const fragment = document.createDocumentFragment();
-    this.todos.forEach(({ description, completed, index, id }) => {
+    this.todos.forEach(({
+      description, completed, index, id,
+    }) => {
       const instance = new ToDo(description, completed, index, id);
       instances.push(instance);
       const todoHtml = instance.createHtml();
