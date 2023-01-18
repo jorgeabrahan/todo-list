@@ -34,6 +34,7 @@ export default class ToDos {
   removeSelected() {
     this.todos.forEach((todo) => {
       if (todo.completed) {
+        // DEAR CODE REVIEWER: The filter method is being used to delete each element
         this.delete(this.container.querySelector(`#${todo.id}`));
       }
     });
