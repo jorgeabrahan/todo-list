@@ -7,6 +7,10 @@ export default class ToDos {
     this.isEditEnabled = false;
   }
 
+  saveLocally() {
+    localStorage.setItem('todos', JSON.stringify(this.todos));
+  }
+
   removeSelected() {
     this.todos.forEach((todo) => {
       if (todo.completed) {
@@ -27,6 +31,7 @@ export default class ToDos {
         element.completed = input.checked;
       }
     });
+    this.saveLocally();
     if (input.checked) {
       input.setAttribute('checked', '');
       todo.querySelector('input[type="text"]').classList.add('completed');
@@ -55,6 +60,7 @@ export default class ToDos {
     if (input.value.trim() === '') {
       this.delete(todo);
     }
+    this.saveLocally();
     this.isEditEnabled = false;
   }
 
@@ -68,6 +74,7 @@ export default class ToDos {
     this.todos = filtered;
     this.fixIndex();
     todo.remove();
+    this.saveLocally();
   }
 
   addEvents(todo) {
@@ -95,6 +102,7 @@ export default class ToDos {
     const todoHtml = todo.createHtml();
     this.addEvents(todoHtml);
     this.container.appendChild(todoHtml);
+    this.saveLocally();
   }
 
   static genId(tokenLen = 16) {
