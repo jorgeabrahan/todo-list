@@ -7,6 +7,14 @@ export default class ToDos {
     this.isEditEnabled = false;
   }
 
+  removeSelected() {
+    this.todos.forEach((todo) => {
+      if (todo.completed) {
+        this.delete(this.container.querySelector(`#${todo.id}`));
+      }
+    });
+  }
+
   fixIndex() {
     this.todos.forEach((todo, index) => {
       todo.index = index;
