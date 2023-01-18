@@ -13,9 +13,7 @@ export default class ToDos {
   loadPrevious() {
     const instances = [];
     const fragment = document.createDocumentFragment();
-    this.todos.forEach(({
-      description, completed, index, id,
-    }) => {
+    this.todos.forEach(({ description, completed, index, id }) => {
       const instance = new ToDo(description, completed, index, id);
       instances.push(instance);
       const todoHtml = instance.createHtml();
@@ -105,7 +103,7 @@ export default class ToDos {
       this.focusIn(todo, target);
     });
     todo.querySelector('input[type="text"]').addEventListener('focusout', ({ relatedTarget, target }) => {
-      if (relatedTarget !== null && relatedTarget.tagName === 'BUTTON') return;
+      if (relatedTarget !== null && relatedTarget.classList.contains('btnDelete')) return;
       this.focusOut(todo, target);
     });
     todo.querySelector('.btnMove').addEventListener('click', () => {
