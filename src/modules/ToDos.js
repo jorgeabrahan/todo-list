@@ -3,8 +3,28 @@ import ToDo from './ToDo.js';
 export default class ToDos {
   constructor(container) {
     this.container = container;
-    this.todos = [];
+    this.todos = JSON.parse(localStorage.getItem('todos')) || [];
+    if (this.todos.length > 0) {
+      this.loadPrevious();
+    }
     this.isEditEnabled = false;
+  }
+
+  loadPrevious() {
+    const instances = [];
+    const fragment = document.createDocumentFragment();
+    this.todos.forEach(({
+      description, completed, index, id,
+    }) => {
+      const instance = new ToDo(description, completed, index, id);
+      instances.push(instance);
+      const todoHtml = instance.createHtml();
+      this.addEvents(todoHtml);
+      fragment.appendChild(todoHtml);
+    });
+    this.container.appendChild(fragment);
+    this.todos = instances;
+    this.saveLocally();
   }
 
   saveLocally() {

@@ -13,10 +13,10 @@ export default class ToDo {
     todo.innerHTML = `
       <div class="todo__content">
         <div class="todo__check">
-          <input class="todo__check-input" type="checkbox" />
+          <input class="todo__check-input" type="checkbox" ${this.completed ? 'checked' : ''} />
           <span class="todo__done material-symbols-outlined"> check </span>
         </div>
-        <input class="todo__description" type="text" value="${this.description}" />
+        <input class="todo__description ${this.completed ? 'completed' : ''}" type="text" value="${this.description}" />
       </div>
       <div class="todo__edit">
         <button class="btnMove btn-icon">
