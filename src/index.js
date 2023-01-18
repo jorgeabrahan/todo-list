@@ -3,10 +3,8 @@ import './style.css';
 
 const todosCnt = document.getElementById('cntTodos');
 const frmAddToDo = document.getElementById('frmAddToDo');
+const btnClearAllTodos = document.getElementById('btnClearAllTodos');
 const todos = new ToDos(todosCnt);
-todos.add('Fix the car');
-todos.add('Clean the house');
-todos.add('Do homeworks');
 
 frmAddToDo.addEventListener('submit', (e) => {
   e.preventDefault();
@@ -17,4 +15,8 @@ frmAddToDo.addEventListener('submit', (e) => {
   todos.add(todo);
   frmAddToDo.reset();
   frmAddToDo.todo.focus();
+});
+
+btnClearAllTodos.addEventListener('click', () => {
+  todos.removeSelected();
 });

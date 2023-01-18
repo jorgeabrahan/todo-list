@@ -3,13 +3,45 @@ import ToDo from './ToDo.js';
 export default class ToDos {
   constructor(container) {
     this.container = container;
-    this.todos = [];
+    this.todos = JSON.parse(localStorage.getItem('todos')) || [];
+    if (this.todos.length > 0) {
+      this.loadPrevious();
+    }
     this.isEditEnabled = false;
+  }
+
+  loadPrevious() {
+    const instances = [];
+    const fragment = document.createDocumentFragment();
+    this.todos.forEach(({
+      description, completed, index, id,
+    }) => {
+      const instance = new ToDo(description, completed, index, id);
+      instances.push(instance);
+      const todoHtml = instance.createHtml();
+      this.addEvents(todoHtml);
+      fragment.appendChild(todoHtml);
+    });
+    this.container.appendChild(fragment);
+    this.todos = instances;
+    this.saveLocally();
+  }
+
+  saveLocally() {
+    localStorage.setItem('todos', JSON.stringify(this.todos));
+  }
+
+  removeSelected() {
+    this.todos.forEach((todo) => {
+      if (todo.completed) {
+        this.delete(this.container.querySelector(`#${todo.id}`));
+      }
+    });
   }
 
   fixIndex() {
     this.todos.forEach((todo, index) => {
-      todo.index = index;
+      todo.index = index + 1;
     });
   }
 
@@ -19,6 +51,7 @@ export default class ToDos {
         element.completed = input.checked;
       }
     });
+    this.saveLocally();
     if (input.checked) {
       input.setAttribute('checked', '');
       todo.querySelector('input[type="text"]').classList.add('completed');
@@ -47,6 +80,7 @@ export default class ToDos {
     if (input.value.trim() === '') {
       this.delete(todo);
     }
+    this.saveLocally();
     this.isEditEnabled = false;
   }
 
@@ -60,6 +94,7 @@ export default class ToDos {
     this.todos = filtered;
     this.fixIndex();
     todo.remove();
+    this.saveLocally();
   }
 
   addEvents(todo) {
@@ -70,7 +105,7 @@ export default class ToDos {
       this.focusIn(todo, target);
     });
     todo.querySelector('input[type="text"]').addEventListener('focusout', ({ relatedTarget, target }) => {
-      if (relatedTarget !== null && relatedTarget.tagName === 'BUTTON') return;
+      if (relatedTarget !== null && relatedTarget.classList.contains('btnDelete')) return;
       this.focusOut(todo, target);
     });
     todo.querySelector('.btnMove').addEventListener('click', () => {
@@ -82,11 +117,12 @@ export default class ToDos {
   }
 
   add(description, completed = false) {
-    const todo = new ToDo(description, completed, this.todos.length, ToDos.genId());
+    const todo = new ToDo(description, completed, this.todos.length + 1, ToDos.genId());
     this.todos.push(todo);
     const todoHtml = todo.createHtml();
     this.addEvents(todoHtml);
     this.container.appendChild(todoHtml);
+    this.saveLocally();
   }
 
   static genId(tokenLen = 16) {
