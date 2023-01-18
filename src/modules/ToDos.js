@@ -41,7 +41,7 @@ export default class ToDos {
 
   fixIndex() {
     this.todos.forEach((todo, index) => {
-      todo.index = index;
+      todo.index = index + 1;
     });
   }
 
@@ -117,7 +117,7 @@ export default class ToDos {
   }
 
   add(description, completed = false) {
-    const todo = new ToDo(description, completed, this.todos.length, ToDos.genId());
+    const todo = new ToDo(description, completed, this.todos.length + 1, ToDos.genId());
     this.todos.push(todo);
     const todoHtml = todo.createHtml();
     this.addEvents(todoHtml);
