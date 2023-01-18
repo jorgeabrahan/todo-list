@@ -116,6 +116,7 @@ export default class ToDos {
     });
 
     todo.addEventListener('dragstart', (e) => {
+      this.focusOut(todo, todo.querySelector('input[type="text"]'));
       dragStart(todo, e);
     });
 
