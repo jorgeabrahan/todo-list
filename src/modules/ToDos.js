@@ -53,6 +53,17 @@ export default class ToDos {
     });
   }
 
+  orderBasedOnUI() {
+    const todosUI = [...this.container.querySelectorAll('.todo')];
+    const ordered = [];
+    todosUI.forEach((todo) => {
+      ordered.push(this.todos.find(({ id }) => id === todo.id));
+    });
+    this.todos = ordered;
+    this.fixIndex();
+    this.saveLocally();
+  }
+
   check(todo, input) {
     this.todos.forEach((element) => {
       if (element.id === todo.id) {
@@ -122,6 +133,7 @@ export default class ToDos {
 
     todo.addEventListener('dragend', () => {
       dragEnd(todo);
+      this.orderBasedOnUI();
     });
   }
 
