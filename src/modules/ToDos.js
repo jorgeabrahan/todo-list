@@ -17,6 +17,15 @@ export default class ToDos {
     });
   }
 
+  clearList() {
+    const todosUI = [...this.container.children];
+    todosUI.forEach((todo) => {
+      todo.remove();
+    });
+    this.todos = [];
+    this.saveLocally();
+  }
+
   loadPrevious() {
     const instances = [];
     const fragment = document.createDocumentFragment();
@@ -41,7 +50,6 @@ export default class ToDos {
   removeSelected() {
     this.todos.forEach((todo) => {
       if (todo.completed) {
-        // DEAR CODE REVIEWER: The filter method is being used to delete each element
         this.delete(this.container.querySelector(`#${todo.id}`));
       }
     });
@@ -54,7 +62,7 @@ export default class ToDos {
   }
 
   orderBasedOnUI() {
-    const todosUI = [...this.container.querySelectorAll('.todo')];
+    const todosUI = [...this.container.children];
     const ordered = [];
     todosUI.forEach((todo) => {
       ordered.push(this.todos.find(({ id }) => id === todo.id));

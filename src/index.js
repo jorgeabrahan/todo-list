@@ -3,7 +3,8 @@ import './style.css';
 
 const todosCnt = document.getElementById('cntTodos');
 const frmAddToDo = document.getElementById('frmAddToDo');
-const btnClearAllTodos = document.getElementById('btnClearAllTodos');
+const btnRemoveSelected = document.getElementById('btnRemoveSelected');
+const btnClearList = document.getElementById('btnClearList');
 const todos = new ToDos(todosCnt);
 
 frmAddToDo.addEventListener('submit', (e) => {
@@ -17,6 +18,10 @@ frmAddToDo.addEventListener('submit', (e) => {
   frmAddToDo.todo.focus();
 });
 
-btnClearAllTodos.addEventListener('click', () => {
+btnRemoveSelected.addEventListener('click', () => {
   todos.removeSelected();
+});
+
+btnClearList.addEventListener('click', () => {
+  todos.clearList();
 });
