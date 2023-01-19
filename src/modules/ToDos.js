@@ -1,3 +1,6 @@
+import {
+  dragEnd, dragOver, dragStart,
+} from './drag.js';
 import ToDo from './ToDo.js';
 
 export default class ToDos {
@@ -8,6 +11,10 @@ export default class ToDos {
       this.loadPrevious();
     }
     this.isEditEnabled = false;
+
+    this.container.addEventListener('dragover', (e) => {
+      dragOver(this.container, e);
+    });
   }
 
   loadPrevious() {
@@ -34,6 +41,7 @@ export default class ToDos {
   removeSelected() {
     this.todos.forEach((todo) => {
       if (todo.completed) {
+        // DEAR CODE REVIEWER: The filter method is being used to delete each element
         this.delete(this.container.querySelector(`#${todo.id}`));
       }
     });
@@ -43,6 +51,17 @@ export default class ToDos {
     this.todos.forEach((todo, index) => {
       todo.index = index + 1;
     });
+  }
+
+  orderBasedOnUI() {
+    const todosUI = [...this.container.querySelectorAll('.todo')];
+    const ordered = [];
+    todosUI.forEach((todo) => {
+      ordered.push(this.todos.find(({ id }) => id === todo.id));
+    });
+    this.todos = ordered;
+    this.fixIndex();
+    this.saveLocally();
   }
 
   check(todo, input) {
@@ -84,11 +103,6 @@ export default class ToDos {
     this.isEditEnabled = false;
   }
 
-  move() {
-    console.log(this.todos);
-    console.log('move');
-  }
-
   delete(todo) {
     const filtered = this.todos.filter(({ id }) => id !== todo.id);
     this.todos = filtered;
@@ -108,11 +122,18 @@ export default class ToDos {
       if (relatedTarget !== null && relatedTarget.classList.contains('btnDelete')) return;
       this.focusOut(todo, target);
     });
-    todo.querySelector('.btnMove').addEventListener('click', () => {
-      this.move(todo);
-    });
     todo.querySelector('.btnDelete').addEventListener('click', () => {
       this.delete(todo);
+    });
+
+    todo.addEventListener('dragstart', (e) => {
+      this.focusOut(todo, todo.querySelector('input[type="text"]'));
+      dragStart(todo, e);
+    });
+
+    todo.addEventListener('dragend', () => {
+      dragEnd(todo);
+      this.orderBasedOnUI();
     });
   }
 
@@ -126,7 +147,7 @@ export default class ToDos {
   }
 
   static genId(tokenLen = 16) {
-    let id = '';
+    let id = 'a';
     const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
     for (let i = 0; i < tokenLen; i += 1) {
       id += chars.charAt(Math.floor(Math.random() * chars.length));

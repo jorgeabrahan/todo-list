@@ -8,8 +8,9 @@ export default class ToDo {
 
   createHtml() {
     const todo = document.createElement('li');
-    todo.className = 'todo';
     todo.id = this.id;
+    todo.className = 'todo';
+    todo.setAttribute('draggable', 'true');
     todo.innerHTML = `
       <div class="todo__content">
         <div class="todo__check">
@@ -19,9 +20,9 @@ export default class ToDo {
         <input class="todo__description ${this.completed ? 'completed' : ''}" type="text" value="${this.description}" />
       </div>
       <div class="todo__edit">
-        <button class="btnMove btn-icon">
-          <span class="material-symbols-outlined"> more_vert </span>
-        </button>
+        <span class="btnMove btn-icon material-symbols-outlined">
+          drag_indicator
+        </span>
         <button class="btnDelete btn-icon">
           <span class="material-symbols-outlined"> delete </span>
         </button>

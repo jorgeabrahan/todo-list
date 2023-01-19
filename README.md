@@ -58,6 +58,7 @@
 
 - **Minified files for performance improvement**
 - **ES6 JavaScript features**
+- **Drag and drop to sort todos**
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 

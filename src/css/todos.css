@@ -3,6 +3,7 @@
   width: 100%;
   max-width: 500px;
   border-radius: 3px;
+  user-select: none;
 
   --padding: 0.8rem;
   --border: 1px solid rgba(0, 0, 0, 0.08);
@@ -110,11 +111,6 @@ input.todo__check-input {
 .todo__description.completed {
   text-decoration: line-through;
   color: var(--clr-secondary);
-}
-
-.btnDelete span,
-.btnMove span {
-  pointer-events: none;
 }
 
 .btnMove {
