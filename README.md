@@ -64,8 +64,7 @@
 
 ## 🚀 Live Demo <a name="live-demo"></a>
 
-Not deployed yet.
-- [https://jorgeabrahan.github.io/](https://github.com/jorgeabrahan)
+- [https://jorgeabrahan.github.io/todo_list](https://jorgeabrahan.github.io/todo_list)
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
