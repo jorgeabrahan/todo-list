@@ -9,7 +9,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (/* binding */ ToDos)
 /* harmony export */ });
-/* harmony import */ var _ToDo_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(2);
+/* harmony import */ var _drag_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(2);
+/* harmony import */ var _ToDo_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(3);
+
 
 
 class ToDos {
@@ -20,13 +22,28 @@ class ToDos {
       this.loadPrevious();
     }
     this.isEditEnabled = false;
+
+    this.container.addEventListener('dragover', (e) => {
+      (0,_drag_js__WEBPACK_IMPORTED_MODULE_0__.dragOver)(this.container, e);
+    });
+  }
+
+  clearList() {
+    const todosUI = [...this.container.children];
+    todosUI.forEach((todo) => {
+      todo.remove();
+    });
+    this.todos = [];
+    this.saveLocally();
   }
 
   loadPrevious() {
     const instances = [];
     const fragment = document.createDocumentFragment();
-    this.todos.forEach(({ description, completed, index, id }) => {
-      const instance = new _ToDo_js__WEBPACK_IMPORTED_MODULE_0__["default"](description, completed, index, id);
+    this.todos.forEach(({
+      description, completed, index, id,
+    }) => {
+      const instance = new _ToDo_js__WEBPACK_IMPORTED_MODULE_1__["default"](description, completed, index, id);
       instances.push(instance);
       const todoHtml = instance.createHtml();
       this.addEvents(todoHtml);
@@ -51,8 +68,19 @@ class ToDos {
 
   fixIndex() {
     this.todos.forEach((todo, index) => {
-      todo.index = index;
+      todo.index = index + 1;
     });
+  }
+
+  orderBasedOnUI() {
+    const todosUI = [...this.container.children];
+    const ordered = [];
+    todosUI.forEach((todo) => {
+      ordered.push(this.todos.find(({ id }) => id === todo.id));
+    });
+    this.todos = ordered;
+    this.fixIndex();
+    this.saveLocally();
   }
 
   check(todo, input) {
@@ -94,11 +122,6 @@ class ToDos {
     this.isEditEnabled = false;
   }
 
-  move() {
-    console.log(this.todos);
-    console.log('move');
-  }
-
   delete(todo) {
     const filtered = this.todos.filter(({ id }) => id !== todo.id);
     this.todos = filtered;
@@ -118,16 +141,23 @@ class ToDos {
       if (relatedTarget !== null && relatedTarget.classList.contains('btnDelete')) return;
       this.focusOut(todo, target);
     });
-    todo.querySelector('.btnMove').addEventListener('click', () => {
-      this.move(todo);
-    });
     todo.querySelector('.btnDelete').addEventListener('click', () => {
       this.delete(todo);
+    });
+
+    todo.addEventListener('dragstart', (e) => {
+      this.focusOut(todo, todo.querySelector('input[type="text"]'));
+      (0,_drag_js__WEBPACK_IMPORTED_MODULE_0__.dragStart)(todo, e);
+    });
+
+    todo.addEventListener('dragend', () => {
+      (0,_drag_js__WEBPACK_IMPORTED_MODULE_0__.dragEnd)(todo);
+      this.orderBasedOnUI();
     });
   }
 
   add(description, completed = false) {
-    const todo = new _ToDo_js__WEBPACK_IMPORTED_MODULE_0__["default"](description, completed, this.todos.length, ToDos.genId());
+    const todo = new _ToDo_js__WEBPACK_IMPORTED_MODULE_1__["default"](description, completed, this.todos.length + 1, ToDos.genId());
     this.todos.push(todo);
     const todoHtml = todo.createHtml();
     this.addEvents(todoHtml);
@@ -136,7 +166,7 @@ class ToDos {
   }
 
   static genId(tokenLen = 16) {
-    let id = '';
+    let id = 'a';
     const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
     for (let i = 0; i < tokenLen; i += 1) {
       id += chars.charAt(Math.floor(Math.random() * chars.length));
@@ -148,6 +178,52 @@ class ToDos {
 
 /***/ }),
 /* 2 */
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "dragEnd": () => (/* binding */ dragEnd),
+/* harmony export */   "dragOver": () => (/* binding */ dragOver),
+/* harmony export */   "dragStart": () => (/* binding */ dragStart)
+/* harmony export */ });
+const dragStart = (todo, e) => {
+  todo.classList.add('dragging');
+  e.dataTransfer.setData('id', todo.id);
+};
+
+const dragEnd = (todo) => {
+  todo.classList.remove('dragging');
+};
+
+const getToDoPositionedAfter = (container, y) => {
+  const todos = [...container.querySelectorAll('.todo:not(.dragging)')];
+  return todos.reduce((closest, child) => {
+    const box = child.getBoundingClientRect();
+    const offset = y - box.top - box.height / 2;
+    if (offset < 0 && offset > closest.offset) {
+      return {
+        offset, element: child,
+      };
+    }
+    return closest;
+  }, { offset: Number.NEGATIVE_INFINITY }).element;
+};
+
+const dragOver = (container, e) => {
+  e.preventDefault();
+  const todo = container.querySelector(`#${e.dataTransfer.getData('id')}`);
+  const todoAfter = getToDoPositionedAfter(container, e.clientY);
+  if (todoAfter === null) {
+    container.appendChild(todo);
+    return;
+  }
+  container.insertBefore(todo, todoAfter);
+};
+
+
+
+/***/ }),
+/* 3 */
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 __webpack_require__.r(__webpack_exports__);
@@ -164,8 +240,9 @@ class ToDo {
 
   createHtml() {
     const todo = document.createElement('li');
-    todo.className = 'todo';
     todo.id = this.id;
+    todo.className = 'todo';
+    todo.setAttribute('draggable', 'true');
     todo.innerHTML = `
       <div class="todo__content">
         <div class="todo__check">
@@ -175,9 +252,9 @@ class ToDo {
         <input class="todo__description ${this.completed ? 'completed' : ''}" type="text" value="${this.description}" />
       </div>
       <div class="todo__edit">
-        <button class="btnMove btn-icon">
-          <span class="material-symbols-outlined"> more_vert </span>
-        </button>
+        <span class="btnMove btn-icon material-symbols-outlined">
+          drag_indicator
+        </span>
         <button class="btnDelete btn-icon">
           <span class="material-symbols-outlined"> delete </span>
         </button>
@@ -189,26 +266,26 @@ class ToDo {
 
 
 /***/ }),
-/* 3 */
+/* 4 */
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
-/* harmony import */ var _node_modules_style_loader_dist_runtime_injectStylesIntoStyleTag_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(4);
+/* harmony import */ var _node_modules_style_loader_dist_runtime_injectStylesIntoStyleTag_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(5);
 /* harmony import */ var _node_modules_style_loader_dist_runtime_injectStylesIntoStyleTag_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_node_modules_style_loader_dist_runtime_injectStylesIntoStyleTag_js__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _node_modules_style_loader_dist_runtime_styleDomAPI_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(5);
+/* harmony import */ var _node_modules_style_loader_dist_runtime_styleDomAPI_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(6);
 /* harmony import */ var _node_modules_style_loader_dist_runtime_styleDomAPI_js__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_node_modules_style_loader_dist_runtime_styleDomAPI_js__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var _node_modules_style_loader_dist_runtime_insertBySelector_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(6);
+/* harmony import */ var _node_modules_style_loader_dist_runtime_insertBySelector_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(7);
 /* harmony import */ var _node_modules_style_loader_dist_runtime_insertBySelector_js__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_node_modules_style_loader_dist_runtime_insertBySelector_js__WEBPACK_IMPORTED_MODULE_2__);
-/* harmony import */ var _node_modules_style_loader_dist_runtime_setAttributesWithoutAttributes_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(7);
+/* harmony import */ var _node_modules_style_loader_dist_runtime_setAttributesWithoutAttributes_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(8);
 /* harmony import */ var _node_modules_style_loader_dist_runtime_setAttributesWithoutAttributes_js__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_node_modules_style_loader_dist_runtime_setAttributesWithoutAttributes_js__WEBPACK_IMPORTED_MODULE_3__);
-/* harmony import */ var _node_modules_style_loader_dist_runtime_insertStyleElement_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(8);
+/* harmony import */ var _node_modules_style_loader_dist_runtime_insertStyleElement_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(9);
 /* harmony import */ var _node_modules_style_loader_dist_runtime_insertStyleElement_js__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(_node_modules_style_loader_dist_runtime_insertStyleElement_js__WEBPACK_IMPORTED_MODULE_4__);
-/* harmony import */ var _node_modules_style_loader_dist_runtime_styleTagTransform_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(9);
+/* harmony import */ var _node_modules_style_loader_dist_runtime_styleTagTransform_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(10);
 /* harmony import */ var _node_modules_style_loader_dist_runtime_styleTagTransform_js__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(_node_modules_style_loader_dist_runtime_styleTagTransform_js__WEBPACK_IMPORTED_MODULE_5__);
-/* harmony import */ var _node_modules_css_loader_dist_cjs_js_style_css__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(10);
+/* harmony import */ var _node_modules_css_loader_dist_cjs_js_style_css__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(11);
 
       
       
@@ -239,7 +316,7 @@ var update = _node_modules_style_loader_dist_runtime_injectStylesIntoStyleTag_js
 
 
 /***/ }),
-/* 4 */
+/* 5 */
 /***/ ((module) => {
 
 
@@ -348,7 +425,7 @@ module.exports = function (list, options) {
 };
 
 /***/ }),
-/* 5 */
+/* 6 */
 /***/ ((module) => {
 
 
@@ -423,7 +500,7 @@ function domAPI(options) {
 module.exports = domAPI;
 
 /***/ }),
-/* 6 */
+/* 7 */
 /***/ ((module) => {
 
 
@@ -467,7 +544,7 @@ function insertBySelector(insert, style) {
 module.exports = insertBySelector;
 
 /***/ }),
-/* 7 */
+/* 8 */
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 
@@ -484,7 +561,7 @@ function setAttributesWithoutAttributes(styleElement) {
 module.exports = setAttributesWithoutAttributes;
 
 /***/ }),
-/* 8 */
+/* 9 */
 /***/ ((module) => {
 
 
@@ -500,7 +577,7 @@ function insertStyleElement(options) {
 module.exports = insertStyleElement;
 
 /***/ }),
-/* 9 */
+/* 10 */
 /***/ ((module) => {
 
 
@@ -521,20 +598,20 @@ function styleTagTransform(css, styleElement) {
 module.exports = styleTagTransform;
 
 /***/ }),
-/* 10 */
+/* 11 */
 /***/ ((module, __webpack_exports__, __webpack_require__) => {
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
-/* harmony import */ var _node_modules_css_loader_dist_runtime_noSourceMaps_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(11);
+/* harmony import */ var _node_modules_css_loader_dist_runtime_noSourceMaps_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(12);
 /* harmony import */ var _node_modules_css_loader_dist_runtime_noSourceMaps_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_node_modules_css_loader_dist_runtime_noSourceMaps_js__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(12);
+/* harmony import */ var _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(13);
 /* harmony import */ var _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var _node_modules_css_loader_dist_cjs_js_css_normalize_css__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(13);
-/* harmony import */ var _node_modules_css_loader_dist_cjs_js_css_general_css__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(14);
-/* harmony import */ var _node_modules_css_loader_dist_cjs_js_css_todos_css__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(15);
+/* harmony import */ var _node_modules_css_loader_dist_cjs_js_css_normalize_css__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(14);
+/* harmony import */ var _node_modules_css_loader_dist_cjs_js_css_general_css__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(15);
+/* harmony import */ var _node_modules_css_loader_dist_cjs_js_css_todos_css__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(16);
 // Imports
 
 
@@ -552,7 +629,7 @@ ___CSS_LOADER_EXPORT___.push([module.id, "\r\n", ""]);
 
 
 /***/ }),
-/* 11 */
+/* 12 */
 /***/ ((module) => {
 
 
@@ -562,7 +639,7 @@ module.exports = function (i) {
 };
 
 /***/ }),
-/* 12 */
+/* 13 */
 /***/ ((module) => {
 
 
@@ -652,16 +729,16 @@ module.exports = function (cssWithMappingToString) {
 };
 
 /***/ }),
-/* 13 */
+/* 14 */
 /***/ ((module, __webpack_exports__, __webpack_require__) => {
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
-/* harmony import */ var _node_modules_css_loader_dist_runtime_noSourceMaps_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(11);
+/* harmony import */ var _node_modules_css_loader_dist_runtime_noSourceMaps_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(12);
 /* harmony import */ var _node_modules_css_loader_dist_runtime_noSourceMaps_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_node_modules_css_loader_dist_runtime_noSourceMaps_js__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(12);
+/* harmony import */ var _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(13);
 /* harmony import */ var _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1__);
 // Imports
 
@@ -675,28 +752,6 @@ ___CSS_LOADER_EXPORT___.push([module.id, "*,\r\n*::before,\r\n*::after {\r\n  bo
 
 
 /***/ }),
-/* 14 */
-/***/ ((module, __webpack_exports__, __webpack_require__) => {
-
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
-/* harmony export */ });
-/* harmony import */ var _node_modules_css_loader_dist_runtime_noSourceMaps_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(11);
-/* harmony import */ var _node_modules_css_loader_dist_runtime_noSourceMaps_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_node_modules_css_loader_dist_runtime_noSourceMaps_js__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(12);
-/* harmony import */ var _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1__);
-// Imports
-
-
-var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1___default()((_node_modules_css_loader_dist_runtime_noSourceMaps_js__WEBPACK_IMPORTED_MODULE_0___default()));
-// Module
-___CSS_LOADER_EXPORT___.push([module.id, ".center {\r\n  display: grid;\r\n  place-items: center;\r\n}\r\n\r\n.h-100vh {\r\n  height: 100vh;\r\n}\r\n\r\n.btn-icon {\r\n  background: none;\r\n  border: none;\r\n  display: flex;\r\n  align-items: center;\r\n}\r\n\r\n.p-1rem {\r\n  padding: 1rem;\r\n}\r\n\r\n.sr-only {\r\n  clip: rect(0 0 0 0);\r\n  clip-path: inset(50%);\r\n  width: 1px;\r\n  aspect-ratio: 1/1;\r\n  overflow: hidden;\r\n  position: absolute;\r\n  white-space: nowrap;\r\n}\r\n", ""]);
-// Exports
-/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
-
-
-/***/ }),
 /* 15 */
 /***/ ((module, __webpack_exports__, __webpack_require__) => {
 
@@ -704,16 +759,38 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
-/* harmony import */ var _node_modules_css_loader_dist_runtime_noSourceMaps_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(11);
+/* harmony import */ var _node_modules_css_loader_dist_runtime_noSourceMaps_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(12);
 /* harmony import */ var _node_modules_css_loader_dist_runtime_noSourceMaps_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_node_modules_css_loader_dist_runtime_noSourceMaps_js__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(12);
+/* harmony import */ var _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(13);
 /* harmony import */ var _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1__);
 // Imports
 
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1___default()((_node_modules_css_loader_dist_runtime_noSourceMaps_js__WEBPACK_IMPORTED_MODULE_0___default()));
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, ".todos {\r\n  background: white;\r\n  width: 100%;\r\n  max-width: 500px;\r\n  border-radius: 3px;\r\n\r\n  --padding: 0.8rem;\r\n  --border: 1px solid rgba(0, 0, 0, 0.08);\r\n  --clr-secondary: #5b5f68;\r\n\r\n  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);\r\n}\r\n\r\n.todos__header {\r\n  display: flex;\r\n  align-items: center;\r\n  justify-content: space-between;\r\n  padding: var(--padding);\r\n  border-bottom: var(--border);\r\n}\r\n\r\n.todos__header *,\r\n.todo__edit * {\r\n  color: var(--clr-secondary);\r\n}\r\n\r\n.todos__form {\r\n  position: relative;\r\n}\r\n\r\n.todos__input {\r\n  width: 100%;\r\n  outline: none;\r\n  border: none;\r\n  border-bottom: var(--border);\r\n  padding: var(--padding);\r\n  font-size: 1.1rem;\r\n  font-style: italic;\r\n}\r\n\r\n.todos__enter-icon {\r\n  position: absolute;\r\n  top: 0;\r\n  right: calc(var(--padding) + 0.4rem);\r\n  height: 100%;\r\n  display: flex;\r\n  align-items: center;\r\n  font-size: 1rem;\r\n  color: var(--clr-secondary);\r\n}\r\n\r\n.todos__list {\r\n  list-style: none;\r\n  padding-left: 0;\r\n}\r\n\r\n.todo {\r\n  padding: var(--padding);\r\n  border-bottom: var(--border);\r\n  justify-content: space-between;\r\n  gap: 1rem;\r\n}\r\n\r\n.todo,\r\n.todo__content,\r\n.todo__check,\r\n.todo__edit {\r\n  display: flex;\r\n  align-items: center;\r\n}\r\n\r\n.todo__content {\r\n  gap: 1rem;\r\n  width: 100%;\r\n}\r\n\r\n.todo__check {\r\n  position: relative;\r\n}\r\n\r\n.todo__done {\r\n  position: absolute;\r\n  left: -2px;\r\n  top: -3px;\r\n  pointer-events: none;\r\n  display: none;\r\n  color: #338de6;\r\n}\r\n\r\ninput.todo__check-input {\r\n  width: 18px;\r\n  height: 18px;\r\n  vertical-align: middle;\r\n}\r\n\r\n.todo__check-input[checked] {\r\n  opacity: 0;\r\n}\r\n\r\n.todo__check-input[checked] + .todo__done {\r\n  display: block;\r\n}\r\n\r\n.todo__description {\r\n  border: none;\r\n  width: 100%;\r\n  outline: none;\r\n}\r\n\r\n.todo__description.completed {\r\n  text-decoration: line-through;\r\n  color: var(--clr-secondary);\r\n}\r\n\r\n.btnDelete span,\r\n.btnMove span {\r\n  pointer-events: none;\r\n}\r\n\r\n.btnMove {\r\n  cursor: move;\r\n}\r\n\r\n.btnDelete {\r\n  display: none;\r\n}\r\n\r\n.todo--focus,\r\n.todo--focus * {\r\n  background-color: #fffeca;\r\n}\r\n\r\n.todo--focus .btnDelete {\r\n  display: flex;\r\n}\r\n\r\n.todo--focus .btnMove {\r\n  display: none;\r\n}\r\n\r\n.todos__clear {\r\n  padding: var(--padding);\r\n  width: 100%;\r\n  background-color: #f6f6f6;\r\n  color: var(--clr-secondary);\r\n  border: none;\r\n}\r\n\r\n.todos__clear:hover {\r\n  text-decoration: underline;\r\n  color: black;\r\n}\r\n", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, ".center {\r\n  display: grid;\r\n  place-items: center;\r\n}\r\n\r\n.h-100vh {\r\n  height: 100vh;\r\n}\r\n\r\n.btn-icon {\r\n  background: none;\r\n  border: none;\r\n  display: flex;\r\n  align-items: center;\r\n}\r\n\r\n.p-1rem {\r\n  padding: 1rem;\r\n}\r\n\r\n.sr-only {\r\n  clip: rect(0 0 0 0);\r\n  clip-path: inset(50%);\r\n  width: 1px;\r\n  aspect-ratio: 1/1;\r\n  overflow: hidden;\r\n  position: absolute;\r\n  white-space: nowrap;\r\n}\r\n\r\n.dragging {\r\n  opacity: 0.5;\r\n}\r\n", ""]);
+// Exports
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
+
+
+/***/ }),
+/* 16 */
+/***/ ((module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _node_modules_css_loader_dist_runtime_noSourceMaps_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(12);
+/* harmony import */ var _node_modules_css_loader_dist_runtime_noSourceMaps_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_node_modules_css_loader_dist_runtime_noSourceMaps_js__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(13);
+/* harmony import */ var _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1__);
+// Imports
+
+
+var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1___default()((_node_modules_css_loader_dist_runtime_noSourceMaps_js__WEBPACK_IMPORTED_MODULE_0___default()));
+// Module
+___CSS_LOADER_EXPORT___.push([module.id, ".todos {\r\n  background: white;\r\n  width: 100%;\r\n  max-width: 500px;\r\n  border-radius: 3px;\r\n  user-select: none;\r\n\r\n  --padding: 0.8rem;\r\n  --border: 1px solid rgba(0, 0, 0, 0.08);\r\n  --clr-secondary: #5b5f68;\r\n\r\n  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);\r\n}\r\n\r\n.todos__header {\r\n  display: flex;\r\n  align-items: center;\r\n  justify-content: space-between;\r\n  padding: var(--padding);\r\n  border-bottom: var(--border);\r\n}\r\n\r\n.todos__header *,\r\n.todo__edit * {\r\n  color: var(--clr-secondary);\r\n}\r\n\r\n.todos__form {\r\n  position: relative;\r\n}\r\n\r\n.todos__input {\r\n  width: 100%;\r\n  outline: none;\r\n  border: none;\r\n  border-bottom: var(--border);\r\n  padding: var(--padding);\r\n  font-size: 1.1rem;\r\n  font-style: italic;\r\n}\r\n\r\n.todos__enter-icon {\r\n  position: absolute;\r\n  top: 0;\r\n  right: calc(var(--padding) + 0.4rem);\r\n  height: 100%;\r\n  display: flex;\r\n  align-items: center;\r\n  font-size: 1rem;\r\n  color: var(--clr-secondary);\r\n}\r\n\r\n.todos__list {\r\n  list-style: none;\r\n  padding-left: 0;\r\n}\r\n\r\n.todo {\r\n  padding: var(--padding);\r\n  border-bottom: var(--border);\r\n  justify-content: space-between;\r\n  gap: 1rem;\r\n}\r\n\r\n.todo,\r\n.todo__content,\r\n.todo__check,\r\n.todo__edit {\r\n  display: flex;\r\n  align-items: center;\r\n}\r\n\r\n.todo__content {\r\n  gap: 1rem;\r\n  width: 100%;\r\n}\r\n\r\n.todo__check {\r\n  position: relative;\r\n}\r\n\r\n.todo__done {\r\n  position: absolute;\r\n  left: -2px;\r\n  top: -3px;\r\n  pointer-events: none;\r\n  display: none;\r\n  color: #338de6;\r\n}\r\n\r\ninput.todo__check-input {\r\n  width: 18px;\r\n  height: 18px;\r\n  vertical-align: middle;\r\n}\r\n\r\n.todo__check-input[checked] {\r\n  opacity: 0;\r\n}\r\n\r\n.todo__check-input[checked] + .todo__done {\r\n  display: block;\r\n}\r\n\r\n.todo__description {\r\n  border: none;\r\n  width: 100%;\r\n  outline: none;\r\n}\r\n\r\n.todo__description.completed {\r\n  text-decoration: line-through;\r\n  color: var(--clr-secondary);\r\n}\r\n\r\n.btnMove {\r\n  cursor: move;\r\n}\r\n\r\n.btnDelete {\r\n  display: none;\r\n}\r\n\r\n.todo--focus,\r\n.todo--focus * {\r\n  background-color: #fffeca;\r\n}\r\n\r\n.todo--focus .btnDelete {\r\n  display: flex;\r\n}\r\n\r\n.todo--focus .btnMove {\r\n  display: none;\r\n}\r\n\r\n.todos__clear {\r\n  padding: var(--padding);\r\n  width: 100%;\r\n  background-color: #f6f6f6;\r\n  color: var(--clr-secondary);\r\n  border: none;\r\n}\r\n\r\n.todos__clear:hover {\r\n  text-decoration: underline;\r\n  color: black;\r\n}\r\n", ""]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
@@ -797,13 +874,14 @@ var __webpack_exports__ = {};
 (() => {
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _modules_ToDos_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(1);
-/* harmony import */ var _style_css__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(3);
+/* harmony import */ var _style_css__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(4);
 
 
 
 const todosCnt = document.getElementById('cntTodos');
 const frmAddToDo = document.getElementById('frmAddToDo');
-const btnClearAllTodos = document.getElementById('btnClearAllTodos');
+const btnRemoveSelected = document.getElementById('btnRemoveSelected');
+const btnClearList = document.getElementById('btnClearList');
 const todos = new _modules_ToDos_js__WEBPACK_IMPORTED_MODULE_0__["default"](todosCnt);
 
 frmAddToDo.addEventListener('submit', (e) => {
@@ -817,8 +895,12 @@ frmAddToDo.addEventListener('submit', (e) => {
   frmAddToDo.todo.focus();
 });
 
-btnClearAllTodos.addEventListener('click', () => {
+btnRemoveSelected.addEventListener('click', () => {
   todos.removeSelected();
+});
+
+btnClearList.addEventListener('click', () => {
+  todos.clearList();
 });
 
 })();
