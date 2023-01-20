@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ToDo list</title>
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200"
+    />
+  <script defer src="main.js"></script></head>
+  <body>
+    <main class="center h-100vh">
+      <section class="todos">
+        <div class="todos__header">
+          <h1>Today's To Do</h1>
+          <button class="btn-icon" id="btnClearList">
+            <span class="material-symbols-outlined"> cycle </span>
+          </button>
+        </div>
+        <!-- form to add new todo -->
+        <form class="todos__form" id="frmAddToDo">
+          <label class="sr-only" for="todo">Add to your list</label>
+          <input
+            class="todos__input"
+            type="text"
+            placeholder="Add to your list..."
+            name="todo"
+            id="todo"
+            maxlength="40"
+          />
+          <span class="todos__enter-icon material-symbols-outlined"> keyboard_return </span>
+        </form>
+        <!-- list of todos -->
+        <ul class="todos__list" id="cntTodos"></ul>
+        <button class="todos__clear" id="btnRemoveSelected">Clear all completed</button>
+      </section>
+    </main>
+  </body>
+</html>
