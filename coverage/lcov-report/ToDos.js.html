@@ -23,9 +23,9 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">25.53% </span>
+                <span class="strong">32.97% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>24/94</span>
+                <span class='fraction'>31/94</span>
             </div>
         
             
@@ -37,16 +37,16 @@
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">16.66% </span>
+                <span class="strong">26.66% </span>
                 <span class="quiet">Functions</span>
-                <span class='fraction'>5/30</span>
+                <span class='fraction'>8/30</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">25.55% </span>
+                <span class="strong">32.22% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>23/90</span>
+                <span class='fraction'>29/90</span>
             </div>
         
             
@@ -274,19 +274,19 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -342,11 +342,11 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -450,8 +450,8 @@ export default class ToDos {
     });
   }
 &nbsp;
-<span class="fstat-no" title="function not covered" >  fi</span>xIndex() {
-<span class="cstat-no" title="statement not covered" >    this.todos.forEach(<span class="fstat-no" title="function not covered" >(t</span>odo, index) =&gt; {</span>
+  fixIndex() {
+    this.todos.forEach(<span class="fstat-no" title="function not covered" >(t</span>odo, index) =&gt; {
 <span class="cstat-no" title="statement not covered" >      todo.index = index + 1;</span>
     });
   }
@@ -506,12 +506,12 @@ export default class ToDos {
 <span class="cstat-no" title="statement not covered" >    this.isEditEnabled = false;</span>
   }
 &nbsp;
-<span class="fstat-no" title="function not covered" >  de</span>lete(todo) {
-    const filtered = <span class="cstat-no" title="statement not covered" >this.todos.filter(<span class="fstat-no" title="function not covered" >({</span> id }) =&gt; <span class="cstat-no" title="statement not covered" >id !== todo.id)</span>;</span>
-<span class="cstat-no" title="statement not covered" >    this.todos = filtered;</span>
-<span class="cstat-no" title="statement not covered" >    this.fixIndex();</span>
-<span class="cstat-no" title="statement not covered" >    todo.remove();</span>
-<span class="cstat-no" title="statement not covered" >    this.saveLocally();</span>
+  delete(todo) {
+    const filtered = this.todos.filter(({ id }) =&gt; id !== todo.id);
+    this.todos = filtered;
+    this.fixIndex();
+    todo.remove();
+    this.saveLocally();
   }
 &nbsp;
   addEvents(todo) {
@@ -565,7 +565,7 @@ export default class ToDos {
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2023-01-25T19:41:06.267Z
+                at 2023-01-25T20:12:38.877Z
             </div>
         <script src="prettify.js"></script>
         <script>
