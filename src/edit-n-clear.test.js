@@ -29,4 +29,15 @@ describe('Tests to the edit, check and clear all completed methods', () => {
     // Assert
     expect(todo.todos[0].completed).toBeTruthy();
   });
+  it('Should remove all the completed todos', () => {
+    // Act
+    todo.add('Three');
+    todo.add('Four');
+    todo.removeSelected();
+    // Assert
+    expect(cntTodos.children.length).toBe(2);
+    todo.todos.forEach((todo) => {
+      expect(todo.completed).toBeFalsy();
+    });
+  });
 });
